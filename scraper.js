@@ -1,6 +1,8 @@
 import { events } from './events.js';
 import * as jsdom from "jsdom";
 
+let last_run = null;
+
 async function CheckSilverElectronicsStock(LINK) {
     const response = await fetch(LINK);
     const body = await response.text();
@@ -30,7 +32,6 @@ async function CheckRoboCrazeStock(LINK) {
         return false;
     }
 }
-
 
 async function CheckThingBitsStock(LINK) {
 
@@ -63,6 +64,8 @@ async function CheckRobuStock(LINK) {
 }
 export async function startScraper() {
 
+    last_run = Date.now();
+
     const LINKS = [
         { link: "https://www.silverlineelectronics.in/collections/raspberry-pi-4/products/raspberry-pi-4-model-b-8gb-silverline-india", name: "silverline" , func : CheckSilverElectronicsStock},
         { link: "https://robocraze.com/products/raspberry-pi-4-model-b-8-gb-ram?src=raspberrypi", name: "robocraze" , func : CheckRoboCrazeStock},
@@ -92,4 +95,8 @@ events.on("change_state", (state) => {
     } else {
         clearInterval(timer_id);
     }
+})
+
+events.on("get_status", () => {
+    events.emit("status", last_run);
 })

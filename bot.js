@@ -27,4 +27,14 @@ bot.command("toggle", (ctx) => {
     }
 })
 
+bot.command("status",(ctx) => {
+    events.emit("get_status");
+    events.once("status", (data) => {
+        if(data)
+        ctx.reply(new Date(data));
+        else 
+        ctx.reply("inactive")
+    })
+})
+
 export default bot;
