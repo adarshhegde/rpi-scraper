@@ -8,9 +8,7 @@ const CHAT_ID = process.env.CHAT_ID;
 let ACTIVE = false;
 
 events.on("available", (site) => {
-
     bot.telegram.sendMessage(CHAT_ID, `available on ${site.link}`);
-    
 })
 
 bot.command("toggle", (ctx) => {
@@ -31,7 +29,7 @@ bot.command("status",(ctx) => {
     events.emit("get_status");
     events.once("status", (data) => {
         if(data)
-        ctx.reply(new Date(data));
+        ctx.reply(new Date(data).toString());
         else 
         ctx.reply("inactive")
     })
