@@ -88,7 +88,6 @@ export async function startScraper() {
 
 
 events.on("change_state", (state) => {
-    console.log(state);
     if (state) {
         startScraper();
         timer_id = setInterval(startScraper, 1000 * 60 * 10);
