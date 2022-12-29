@@ -63,6 +63,32 @@ async function CheckRobuStock(LINK) {
         return false;
     }
 }
+
+
+async function CheckRpiBox(LINK) {
+    const response = await fetch(LINK);
+    const body = await response.text();
+    
+    try {
+        const dom = new jsdom.JSDOM(body.replace(/<style(\s|>).*?<\/style>/gi, ''), { url: "https://pibox.in" });
+
+        const document = dom.window.document;
+
+        const add_to_cart_btn = document.querySelector(".single_add_to_cart_button");
+
+        if(!!add_to_cart_btn) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    catch(err) {
+        console.log(err);
+        return false;
+    }
+
+}
 export async function startScraper() {
 
     last_run = Date.now();
@@ -72,6 +98,7 @@ export async function startScraper() {
         { link: "https://robocraze.com/products/raspberry-pi-4-model-b-8-gb-ram?src=raspberrypi", name: "robocraze", func: CheckRoboCrazeStock },
         { link: "https://www.thingbits.in/products/raspberry-pi-4-model-b-8-gb-ram?src=raspberrypi?src=raspberrypi", name: "thingbits", func: CheckThingBitsStock },
         { link: "https://robu.in/product/raspberry-pi-4-model-b-with-8-gb-ram/?src=raspberrypi", name: "robu", func: CheckRobuStock },
+        { link: "https://www.pibox.in/product/raspberry-pi-4b-8gb-board/", name: "RpiBox", func: CheckRpiBox }
     ]
 
     const results = [];
@@ -79,6 +106,7 @@ export async function startScraper() {
         results.push({ name: site.name, link: site.link, available: await site.func(site.link) });
     }
     console.log(results);
+    
     for (let res of results) {
         if (res.available) {
             events.emit("available", res);
